@@ -21,7 +21,10 @@ import { checkAuth } from "./store/auth-slice";
 import { Skeleton } from "@/components/ui/skeleton";
 import PaypalReturnPage from "./pages/shopping-view/paypal-return";
 import PaymentSuccessPage from "./pages/shopping-view/payment-success";
+import PaypalCancelPage from "./components/shopping-view/paypal-cancel";
 import SearchProducts from "./pages/shopping-view/search";
+import Cart from "./components/shopping-view/cart";
+import ProductView from "./pages/shopping-view/ProductView";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -33,7 +36,9 @@ function App() {
     dispatch(checkAuth());
   }, [dispatch]);
 
-  if (isLoading) return <Skeleton className="w-[800] bg-black h-[600px]" />;
+  if (isLoading) {
+    return <Skeleton className="w-[800] bg-gray-900 h-[600px]" />
+  }
 
   console.log(isLoading, user);
 
@@ -42,14 +47,10 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={
-            <CheckAuth
-              isAuthenticated={isAuthenticated}
-              user={user}
-              isIndex={true}
-            ></CheckAuth>
-          }
-        />
+          element={<ShoppingLayout />}
+        >
+          <Route index element={<ShoppingHome />} />
+        </Route>
         <Route
           path="/auth"
           element={
@@ -76,20 +77,29 @@ function App() {
         </Route>
         <Route
           path="/shop"
+          element={<ShoppingLayout />}
+        >
+          <Route index element={<ShoppingHome />} />
+          <Route path="listing" element={<ShoppingListing />} />
+          <Route path="view/:id" element={<ProductView />} />
+          <Route path="search" element={<SearchProducts />} />
+        </Route>
+        <Route
+          path="/shop"
           element={
             <CheckAuth isAuthenticated={isAuthenticated} user={user}>
               <ShoppingLayout />
             </CheckAuth>
           }
         >
-          <Route path="home" element={<ShoppingHome />} />
-          <Route path="listing" element={<ShoppingListing />} />
+          <Route path="cart" element={<Cart />} />
           <Route path="checkout" element={<ShoppingCheckout />} />
           <Route path="account" element={<ShoppingAccount />} />
           <Route path="paypal-return" element={<PaypalReturnPage />} />
           <Route path="payment-success" element={<PaymentSuccessPage />} />
-          <Route path="search" element={<SearchProducts />} />
+          <Route path="paypal-cancel" element={<PaypalCancelPage />} />
         </Route>
+
         <Route path="/unauth-page" element={<UnauthPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -1,5 +1,5 @@
-import ProductDetailsDialog from "@/components/shopping-view/product-details";
 import ShoppingProductTile from "@/components/shopping-view/product-tile";
+import ProductDetailsDialog from "@/components/shopping-view/ProductDetailsDialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
@@ -15,21 +15,27 @@ import { useSearchParams } from "react-router-dom";
 function SearchProducts() {
   const [keyword, setKeyword] = useState("");
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
   const { searchResults } = useSelector((state) => state.shopSearch);
   const { productDetails } = useSelector((state) => state.shopProducts);
-
   const { user } = useSelector((state) => state.auth);
-
   const { cartItems } = useSelector((state) => state.shopCart);
   const { toast } = useToast();
+
   useEffect(() => {
-    if (keyword && keyword.trim() !== "" && keyword.trim().length > 3) {
-      setTimeout(() => {
+    if (keyword.trim() && keyword.length >= 3) {
+      setIsLoading(true);
+      const delayDebounce = setTimeout(() => {
         setSearchParams(new URLSearchParams(`?keyword=${keyword}`));
-        dispatch(getSearchResults(keyword));
+        dispatch(getSearchResults(keyword)).finally(() => setIsLoading(false));
       }, 1000);
+
+      return () => {
+        clearTimeout(delayDebounce)
+        setIsLoading(false);
+      };
     } else {
       setSearchParams(new URLSearchParams(`?keyword=${keyword}`));
       dispatch(resetSearchResults());
@@ -37,23 +43,19 @@ function SearchProducts() {
   }, [keyword]);
 
   function handleAddtoCart(getCurrentProductId, getTotalStock) {
-    console.log(cartItems);
-    let getCartItems = cartItems.items || [];
+    const getCartItems = cartItems.items || [];
+    const indexOfCurrentItem = getCartItems.findIndex(
+      (item) => item.productId === getCurrentProductId
+    );
 
-    if (getCartItems.length) {
-      const indexOfCurrentItem = getCartItems.findIndex(
-        (item) => item.productId === getCurrentProductId
-      );
-      if (indexOfCurrentItem > -1) {
-        const getQuantity = getCartItems[indexOfCurrentItem].quantity;
-        if (getQuantity + 1 > getTotalStock) {
-          toast({
-            title: `Only ${getQuantity} quantity can be added for this item`,
-            variant: "destructive",
-          });
-
-          return;
-        }
+    if (indexOfCurrentItem > -1) {
+      const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+      if (getQuantity + 1 > getTotalStock) {
+        toast({
+          title: `Only ${getQuantity} quantity can be added for this item`,
+          variant: "destructive",
+        });
+        return;
       }
     }
 
@@ -74,15 +76,12 @@ function SearchProducts() {
   }
 
   function handleGetProductDetails(getCurrentProductId) {
-    console.log(getCurrentProductId);
     dispatch(fetchProductDetails(getCurrentProductId));
   }
 
   useEffect(() => {
     if (productDetails !== null) setOpenDetailsDialog(true);
   }, [productDetails]);
-
-  console.log(searchResults, "searchResults");
 
   return (
     <div className="container mx-auto md:px-6 px-4 py-8">
@@ -97,22 +96,34 @@ function SearchProducts() {
           />
         </div>
       </div>
-      {!searchResults.length ? (
-        <h1 className="text-5xl font-extrabold">No result found!</h1>
-      ) : null}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-        {searchResults.map((item) => (
-          <ShoppingProductTile
-            handleAddtoCart={handleAddtoCart}
-            product={item}
-            handleGetProductDetails={handleGetProductDetails}
-          />
-        ))}
-      </div>
+
+      {isLoading ? (
+        <div className="flex justify-center py-12">
+          <div className="loader"></div> {/* Use a CSS loader or spinner */}
+        </div>
+      ) : !keyword.trim() ? (
+        <h2 className="text-2xl text-center mt-4">
+          Please enter a keyword to start searching.
+        </h2>
+      ) : searchResults.length === 0 ? (
+        <h2 className="text-2xl text-center mt-4">No results found!</h2>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          {searchResults.map((item, index) => (
+            <ShoppingProductTile
+              key={index}
+              handleAddtoCart={handleAddtoCart}
+              product={item}
+              handleGetProductDetails={handleGetProductDetails}
+            />
+          ))}
+        </div>
+      )}
+
       <ProductDetailsDialog
         open={openDetailsDialog}
         setOpen={setOpenDetailsDialog}
-        productDetails={productDetails}
+        product={productDetails}
       />
     </div>
   );

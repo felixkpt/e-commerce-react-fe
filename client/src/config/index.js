@@ -1,3 +1,5 @@
+import { categories } from "./categories";
+
 export const registerFormControls = [
   {
     name: "userName",
@@ -57,13 +59,15 @@ export const addProductFormElements = [
     label: "Category",
     name: "category",
     componentType: "select",
-    options: [
-      { id: "men", label: "Men" },
-      { id: "women", label: "Women" },
-      { id: "kids", label: "Kids" },
-      { id: "accessories", label: "Accessories" },
-      { id: "footwear", label: "Footwear" },
-    ],
+    options: categories,
+    populates: 'subcategory',
+  },
+  {
+    label: "Sub Category",
+    name: "subcategory",
+    componentType: "select",
+    options: null,
+    populates: null,
   },
   {
     label: "Brand",
@@ -79,11 +83,11 @@ export const addProductFormElements = [
     ],
   },
   {
-    label: "Price",
-    name: "price",
+    label: "Base Price",
+    name: "basePrice",
     componentType: "input",
     type: "number",
-    placeholder: "Enter product price",
+    placeholder: "Enter product base price",
   },
   {
     label: "Sale Price",
@@ -99,13 +103,37 @@ export const addProductFormElements = [
     type: "number",
     placeholder: "Enter total stock",
   },
+  {
+    label: "Stock Status",
+    name: "stockStatus",
+    componentType: "select",
+    options: [
+      { id: "in-stock", label: "In Stock" },
+      { id: "out-of-stock", label: "Out of Stock" },
+      { id: "pre-order", label: "Pre-order" },
+    ],
+  },
 ];
+
+
+export const initialFormData = {
+  image: null,
+  title: "",
+  description: "", // Matches `default: null` but initializes as an empty string for input
+  category: "", // New field to store reference to Category
+  subcategory: "", // New field to store reference to SubCategory (optional)
+  brand: "", // Nullable brand
+  basePrice: "", // Required field for product price
+  salePrice: "", // Nullable field for sale price
+  totalStock: "", // Required field for total stock
+  stockStatus: "", // New field for stock status
+};
 
 export const shoppingViewHeaderMenuItems = [
   {
     id: "home",
     label: "Home",
-    path: "/shop/home",
+    path: "/shop",
   },
   {
     id: "products",
@@ -162,13 +190,6 @@ export const brandOptionsMap = {
 };
 
 export const filterOptions = {
-  category: [
-    { id: "men", label: "Men" },
-    { id: "women", label: "Women" },
-    { id: "kids", label: "Kids" },
-    { id: "accessories", label: "Accessories" },
-    { id: "footwear", label: "Footwear" },
-  ],
   brand: [
     { id: "nike", label: "Nike" },
     { id: "adidas", label: "Adidas" },

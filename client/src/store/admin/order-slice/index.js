@@ -11,7 +11,7 @@ export const getAllOrdersForAdmin = createAsyncThunk(
   "/order/getAllOrdersForAdmin",
   async () => {
     const response = await axios.get(
-      app.urls.api + `api/admin/orders/get`
+      app.urls.api + `/api/admin/orders/get`
     );
 
     return response.data;
@@ -22,7 +22,7 @@ export const getOrderDetailsForAdmin = createAsyncThunk(
   "/order/getOrderDetailsForAdmin",
   async (id) => {
     const response = await axios.get(
-      app.urls.api + `api/admin/orders/details/${id}`
+      app.urls.api + `/api/admin/orders/details/${id}`
     );
 
     return response.data;
@@ -33,7 +33,7 @@ export const updateOrderStatus = createAsyncThunk(
   "/order/updateOrderStatus",
   async ({ id, orderStatus }) => {
     const response = await axios.put(
-      app.urls.api + `api/admin/orders/update/${id}`,
+      app.urls.api + `/api/admin/orders/update/${id}`,
       {
         orderStatus,
       }

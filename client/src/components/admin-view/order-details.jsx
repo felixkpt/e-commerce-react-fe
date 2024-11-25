@@ -22,8 +22,6 @@ function AdminOrderDetailsView({ orderDetails }) {
   const dispatch = useDispatch();
   const { toast } = useToast();
 
-  console.log(orderDetails, "orderDetailsorderDetails");
-
   function handleUpdateStatus(event) {
     event.preventDefault();
     const { status } = formData;
@@ -40,6 +38,20 @@ function AdminOrderDetailsView({ orderDetails }) {
         });
       }
     });
+  }
+
+  const orderStatus = orderDetails?.orderStatus
+  let orderClass = "bg-black"; // Default class
+  if (orderStatus === "confirmed") {
+    orderClass = "bg-green-500";
+  } else if (orderStatus === "rejected") {
+    orderClass = "bg-red-600";
+  } else if (orderStatus === "delivered") {
+    orderClass = "bg-green-600";
+  } else if (orderStatus === "inShipping") {
+    orderClass = "bg-blue-600";
+  } else if (orderStatus === "inProcess") {
+    orderClass = "bg-indigo-400";
   }
 
   return (
@@ -70,13 +82,7 @@ function AdminOrderDetailsView({ orderDetails }) {
             <p className="font-medium">Order Status</p>
             <Label>
               <Badge
-                className={`py-1 px-3 ${
-                  orderDetails?.orderStatus === "confirmed"
-                    ? "bg-green-500"
-                    : orderDetails?.orderStatus === "rejected"
-                    ? "bg-red-600"
-                    : "bg-black"
-                }`}
+                className={`py-1 px-3 ${orderClass}`}
               >
                 {orderDetails?.orderStatus}
               </Badge>
@@ -89,13 +95,13 @@ function AdminOrderDetailsView({ orderDetails }) {
             <div className="font-medium">Order Details</div>
             <ul className="grid gap-3">
               {orderDetails?.cartItems && orderDetails?.cartItems.length > 0
-                ? orderDetails?.cartItems.map((item) => (
-                    <li className="flex items-center justify-between">
-                      <span>Title: {item.title}</span>
-                      <span>Quantity: {item.quantity}</span>
-                      <span>Price: ${item.price}</span>
-                    </li>
-                  ))
+                ? orderDetails?.cartItems.map((item, i) => (
+                  <li key={i} className="flex items-center justify-between">
+                    <span>Title: {item.title}</span>
+                    <span>Quantity: {item.quantity}</span>
+                    <span>Price: ${item.price}</span>
+                  </li>
+                ))
                 : null}
             </ul>
           </div>

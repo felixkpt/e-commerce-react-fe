@@ -58,19 +58,29 @@ function AdminOrdersView() {
           </TableHeader>
           <TableBody>
             {orderList && orderList.length > 0
-              ? orderList.map((orderItem) => (
-                  <TableRow>
+              ? orderList.map((orderItem, i) => {
+
+                const orderStatus = orderItem?.orderStatus
+                let orderClass = "bg-black"; // Default class
+                if (orderStatus === "confirmed") {
+                  orderClass = "bg-green-500";
+                } else if (orderStatus === "rejected") {
+                  orderClass = "bg-red-600";
+                } else if (orderStatus === "delivered") {
+                  orderClass = "bg-green-600";
+                } else if (orderStatus === "inShipping") {
+                  orderClass = "bg-blue-600";
+                } else if (orderStatus === "inProcess") {
+                  orderClass = "bg-indigo-400";
+                }
+
+                return (
+                  <TableRow key={i}>
                     <TableCell>{orderItem?._id}</TableCell>
                     <TableCell>{orderItem?.orderDate.split("T")[0]}</TableCell>
                     <TableCell>
                       <Badge
-                        className={`py-1 px-3 ${
-                          orderItem?.orderStatus === "confirmed"
-                            ? "bg-green-500"
-                            : orderItem?.orderStatus === "rejected"
-                            ? "bg-red-600"
-                            : "bg-black"
-                        }`}
+                        className={`py-1 px-3 ${orderClass}`}
                       >
                         {orderItem?.orderStatus}
                       </Badge>
@@ -95,7 +105,8 @@ function AdminOrdersView() {
                       </Dialog>
                     </TableCell>
                   </TableRow>
-                ))
+                )
+              })
               : null}
           </TableBody>
         </Table>

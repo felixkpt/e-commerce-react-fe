@@ -9,6 +9,7 @@ import {
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
+import { useState } from "react";
 
 function CommonForm({
   formControls,
@@ -18,86 +19,120 @@ function CommonForm({
   buttonText,
   isBtnDisabled,
 }) {
+
+  const [stateOptions, setStateOptions] = useState({})
+
+  function resolveOptions(name, options) {
+
+    if (!stateOptions[name]) {
+      setStateOptions({ ...stateOptions, [name]: options })
+    }
+  }
+
+  const handleDropdownChange = (value, getControlItem) => {
+    setFormData({
+      ...formData,
+      [getControlItem.name]: value,
+    })
+
+    if (getControlItem.populates) {
+
+      const item = getControlItem.options.find((itm) => itm.name == value)
+
+      if (item) {
+        setStateOptions({ ...setStateOptions, [getControlItem.populates]: item["subcategories"] })
+
+      }
+    }
+
+  }
+
   function renderInputsByComponentType(getControlItem) {
     let element = null;
-    const value = formData[getControlItem.name] || "";
+    const name = getControlItem.name;
+    const value = formData[name]?.name || formData[name] || "";
 
     switch (getControlItem.componentType) {
       case "input":
         element = (
           <Input
-            name={getControlItem.name}
+            name={name}
             placeholder={getControlItem.placeholder}
-            id={getControlItem.name}
+            id={name}
             type={getControlItem.type}
             value={value}
             onChange={(event) =>
               setFormData({
                 ...formData,
-                [getControlItem.name]: event.target.value,
+                [name]: event.target.value,
               })
             }
           />
         );
-
         break;
+
       case "select":
-        element = (
-          <Select
-            onValueChange={(value) =>
-              setFormData({
-                ...formData,
-                [getControlItem.name]: value,
-              })
-            }
-            value={value}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder={getControlItem.label} />
-            </SelectTrigger>
-            <SelectContent>
-              {getControlItem.options && getControlItem.options.length > 0
-                ? getControlItem.options.map((optionItem) => (
-                    <SelectItem key={optionItem.id} value={optionItem.id}>
-                      {optionItem.label}
-                    </SelectItem>
-                  ))
-                : null}
-            </SelectContent>
-          </Select>
-        );
+        {
+          if (getControlItem.options) {
+            resolveOptions(name, getControlItem.options);
+          }
 
-        break;
+          element = (
+            <Select
+              onValueChange={(val) => handleDropdownChange(val, getControlItem)}
+              value={value}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={getControlItem.label} />
+              </SelectTrigger>
+              <SelectContent>
+                {stateOptions[name]?.length > 0
+                  ? stateOptions[name].map((optionItem) => {
+                    const id = optionItem.id  || optionItem._id || optionItem.name || optionItem.label || optionItem
+                    const selected = value ? String(value) == String(id) : false
+
+                    return (
+                      <SelectItem key={id} value={id} selected={selected}>
+                        {optionItem.label || optionItem.name || optionItem}
+                      </SelectItem>
+                    )
+                  })
+                  : null}
+              </SelectContent>
+            </Select>
+          );
+          break;
+        }
+
       case "textarea":
         element = (
           <Textarea
-            name={getControlItem.name}
+            name={name}
             placeholder={getControlItem.placeholder}
             id={getControlItem.id}
             value={value}
             onChange={(event) =>
               setFormData({
                 ...formData,
-                [getControlItem.name]: event.target.value,
+                [name]: event.target.value,
               })
             }
           />
         );
-
         break;
 
       default:
         element = (
           <Input
-            name={getControlItem.name}
+            name={name}
             placeholder={getControlItem.placeholder}
-            id={getControlItem.name}
+            id={name}
             type={getControlItem.type}
             value={value}
             onChange={(event) =>
               setFormData({
                 ...formData,
-                [getControlItem.name]: event.target.value,
+                [name]: event.target.value,
               })
             }
           />

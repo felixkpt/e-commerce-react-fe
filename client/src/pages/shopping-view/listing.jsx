@@ -1,6 +1,6 @@
 import ProductFilter from "@/components/shopping-view/filter";
-import ProductDetailsDialog from "@/components/shopping-view/product-details";
 import ShoppingProductTile from "@/components/shopping-view/product-tile";
+import ProductDetailsDialog from "@/components/shopping-view/ProductDetailsDialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,7 +19,7 @@ import {
 import { ArrowUpDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 function createSearchParamsHelper(filterParams) {
   const queryParams = [];
@@ -32,8 +32,6 @@ function createSearchParamsHelper(filterParams) {
     }
   }
 
-  console.log(queryParams, "queryParams");
-
   return queryParams.join("&");
 }
 
@@ -42,13 +40,19 @@ function ShoppingListing() {
   const { productList, productDetails } = useSelector(
     (state) => state.shopProducts
   );
+
   const { cartItems } = useSelector((state) => state.shopCart);
-  const { user } = useSelector((state) => state.auth);
+  const { user, isAuthenticated, isLoading: authLoading } = useSelector(
+    (state) => state.auth
+  );
   const [filters, setFilters] = useState({});
   const [sort, setSort] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const categorySearchParam = searchParams.get("category");
 
@@ -79,12 +83,14 @@ function ShoppingListing() {
   }
 
   function handleGetProductDetails(getCurrentProductId) {
-    console.log(getCurrentProductId);
     dispatch(fetchProductDetails(getCurrentProductId));
   }
 
   function handleAddtoCart(getCurrentProductId, getTotalStock) {
-    console.log(cartItems);
+    if (!isAuthenticated && !authLoading) {
+      return navigate("/auth/login");
+    }
+
     let getCartItems = cartItems.items || [];
 
     if (getCartItems.length) {
@@ -133,17 +139,17 @@ function ShoppingListing() {
   }, [filters]);
 
   useEffect(() => {
-    if (filters !== null && sort !== null)
+    if (filters !== null && sort !== null) {
+      setLoading(true);
       dispatch(
         fetchAllFilteredProducts({ filterParams: filters, sortParams: sort })
-      );
+      ).finally(() => setLoading(false));
+    }
   }, [dispatch, sort, filters]);
 
   useEffect(() => {
     if (productDetails !== null) setOpenDetailsDialog(true);
   }, [productDetails]);
-
-  console.log(productList, "productListproductListproductList");
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
@@ -181,22 +187,30 @@ function ShoppingListing() {
             </DropdownMenu>
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-          {productList && productList.length > 0
-            ? productList.map((productItem) => (
-                <ShoppingProductTile
-                  handleGetProductDetails={handleGetProductDetails}
-                  product={productItem}
-                  handleAddtoCart={handleAddtoCart}
-                />
-              ))
-            : null}
-        </div>
+
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <div className="loader"></div>
+          </div>
+        ) : productList?.length === 0 ? (
+          <h2 className="text-2xl text-center py-12">No products found!</h2>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+            {productList.map((productItem, i) => (
+              <ShoppingProductTile
+                key={i}
+                handleGetProductDetails={handleGetProductDetails}
+                product={productItem}
+                handleAddtoCart={handleAddtoCart}
+              />
+            ))}
+          </div>
+        )}
       </div>
       <ProductDetailsDialog
         open={openDetailsDialog}
         setOpen={setOpenDetailsDialog}
-        productDetails={productDetails}
+        product={productDetails}
       />
     </div>
   );

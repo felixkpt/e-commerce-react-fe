@@ -24,6 +24,23 @@ export const addNewProduct = createAsyncThunk(
   }
 );
 
+export const uploadProductsFromJSON = createAsyncThunk(
+  "/products/addnewproductafromjson",
+  async (formData) => {
+    const result = await axios.post(
+      app.urls.api + "/api/admin/products/add-from-json",
+      formData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return result?.data || result?.error;
+  }
+);
+
 export const fetchAllProducts = createAsyncThunk(
   "/products/fetchAllProducts",
   async () => {
@@ -39,7 +56,7 @@ export const editProduct = createAsyncThunk(
   "/products/editProduct",
   async ({ id, formData }) => {
     const result = await axios.put(
-      app.urls.api + `api/admin/products/edit/${id}`,
+      app.urls.api + `/api/admin/products/edit/${id}`,
       formData,
       {
         headers: {
@@ -56,7 +73,7 @@ export const deleteProduct = createAsyncThunk(
   "/products/deleteProduct",
   async (id) => {
     const result = await axios.delete(
-      app.urls.api + `api/admin/products/delete/${id}`
+      app.urls.api + `/api/admin/products/delete/${id}`
     );
 
     return result?.data;

@@ -1,14 +1,12 @@
 import { Navigate, useLocation } from "react-router-dom";
 
-function CheckAuth({ isAuthenticated, user, children,isIndex =false }) {
+function CheckAuth({ isAuthenticated, user, children, isIndex = false }) {
   const location = useLocation();
-
-  console.log(location.pathname, isAuthenticated);
 
   if (location.pathname === "/") {
     if (!isAuthenticated) {
       return <Navigate to="/auth/login" />;
-    }else if (isIndex){
+    } else if (isIndex) {
       return <Navigate to="/shop" />;
     }
   }
@@ -31,7 +29,7 @@ function CheckAuth({ isAuthenticated, user, children,isIndex =false }) {
     if (user?.role === "admin") {
       return <Navigate to="/admin/dashboard" />;
     } else {
-      return <Navigate to="/shop/home" />;
+      return <Navigate to="/shop" />;
     }
   }
 
