@@ -15,6 +15,12 @@ Welcome to **ShopHive**, a modern e-commerce platform designed to deliver a seam
 
 ---
 
+## Video Demo
+
+Check out a video demo of **ShopHive**: [ShopHive Live](https://drive.google.com/file/d/1k_emtZexsalIEc3ogYudiVX2hab_-AXaddd/view)
+
+---
+
 ## Installation Guide
 
 ### Prerequisites
