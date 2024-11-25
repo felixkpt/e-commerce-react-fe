@@ -1,87 +1,89 @@
-const { imageUploadUtil } = require("../../helpers/cloudinary");
+// Import necessary helpers and models
+const { generateSKU, getCatAndSubcat, createProduct } = require("../../helpers/app");
+const { imageUploadUtil } = require("../../helpers/file-upload");
 const Product = require("../../models/Product");
 
+// Handles image upload to different storage strategies (cloud/local)
 const handleImageUpload = async (req, res) => {
   try {
-    const b64 = Buffer.from(req.file.buffer).toString("base64");
-    const url = "data:" + req.file.mimetype + ";base64," + b64;
-    const result = await imageUploadUtil(url);
+    const strategy = req.strategy; // Define storage strategy (cloud/local)
+    const fileBuffer = req.file.buffer; // Buffer for cloud storage
+    const filePath = req.file.path; // Path for local storage
+
+    let result;
+    if (strategy === "cloud") {
+      const b64 = Buffer.from(fileBuffer).toString("base64");
+      const url = `data:${req.file.mimetype};base64,${b64}`;
+      result = await imageUploadUtil(req, url, "cloud");
+    } else if (strategy === "local") {
+      result = await imageUploadUtil(req, filePath, "local");
+    } else {
+      throw new Error("Invalid strategy");
+    }
 
     res.json({
       success: true,
+      strategy,
       result,
     });
   } catch (error) {
-    console.log(error);
-    res.json({
-      success: false,
-      message: "Error occured",
-    });
-  }
-};
-
-//add a new product
-const addProduct = async (req, res) => {
-  try {
-    const {
-      image,
-      title,
-      description,
-      category,
-      brand,
-      price,
-      salePrice,
-      totalStock,
-      averageReview,
-    } = req.body;
-
-    console.log(averageReview, "averageReview");
-
-    const newlyCreatedProduct = new Product({
-      image,
-      title,
-      description,
-      category,
-      brand,
-      price,
-      salePrice,
-      totalStock,
-      averageReview,
-    });
-
-    await newlyCreatedProduct.save();
-    res.status(201).json({
-      success: true,
-      data: newlyCreatedProduct,
-    });
-  } catch (e) {
-    console.log(e);
+    console.error(error);
     res.status(500).json({
       success: false,
-      message: "Error occured",
+      message: "Error occurred during image upload.",
     });
   }
 };
 
-//fetch all products
-
+// Fetches all products with populated category and subcategory details
 const fetchAllProducts = async (req, res) => {
   try {
-    const listOfProducts = await Product.find({});
+    const listOfProducts = await Product.find({})
+      .populate("category", "name")
+      .populate("subcategory", "name");
+
     res.status(200).json({
       success: true,
       data: listOfProducts,
     });
   } catch (e) {
-    console.log(e);
+    console.error(e);
     res.status(500).json({
       success: false,
-      message: "Error occured",
+      message: "Error occurred while fetching products.",
     });
   }
 };
 
-//edit a product
+// Adds a new product to the database with validation and SKU generation
+const addProduct = async (req, res) => {
+  try {
+
+    // Check if the product title already exists
+    const existingProduct = await Product.findOne({ title: req.title });
+    if (existingProduct) {
+      return res.status(400).json({
+        success: false,
+        message: `Product with title "${req.title}" already exists.`,
+      });
+    }
+
+    prod = await createProduct(req)
+
+    res.status(201).json({
+      success: true,
+      data: prod,
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({
+      success: false,
+      message: "Error occurred while adding the product.",
+    });
+  }
+};
+
+// Edits an existing product with proper validation and updates
 const editProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -90,70 +92,87 @@ const editProduct = async (req, res) => {
       title,
       description,
       category,
+      subcategory,
       brand,
-      price,
+      basePrice,
       salePrice,
       totalStock,
+      reviewCounts,
       averageReview,
     } = req.body;
 
     let findProduct = await Product.findById(id);
-    if (!findProduct)
+    if (!findProduct) {
       return res.status(404).json({
         success: false,
         message: "Product not found",
       });
+    }
 
+    const [categoryObj, subcategoryObj] = await getCatAndSubcat(category, subcategory);
+    if (categoryObj) findProduct.category = categoryObj._id;
+    if (subcategoryObj) findProduct.subcategory = subcategoryObj._id;
+
+    if (image) findProduct.image = image;
     findProduct.title = title || findProduct.title;
     findProduct.description = description || findProduct.description;
-    findProduct.category = category || findProduct.category;
     findProduct.brand = brand || findProduct.brand;
-    findProduct.price = price === "" ? 0 : price || findProduct.price;
-    findProduct.salePrice =
-      salePrice === "" ? 0 : salePrice || findProduct.salePrice;
+    findProduct.basePrice = basePrice === "" ? 0 : basePrice || findProduct.basePrice;
+    findProduct.salePrice = salePrice === "" ? 0 : salePrice || findProduct.salePrice;
     findProduct.totalStock = totalStock || findProduct.totalStock;
-    findProduct.image = image || findProduct.image;
+    findProduct.reviewCounts = reviewCounts || findProduct.reviewCounts;
     findProduct.averageReview = averageReview || findProduct.averageReview;
 
+    if (title || categoryObj) {
+      findProduct.sku = generateSKU(findProduct.title, categoryObj._id);
+    }
+
     await findProduct.save();
+
+    const updatedProduct = await Product.findById(id)
+      .populate("category", "name")
+      .populate("subcategory", "name");
+
     res.status(200).json({
       success: true,
-      data: findProduct,
+      data: updatedProduct,
     });
   } catch (e) {
-    console.log(e);
+    console.error(e);
     res.status(500).json({
       success: false,
-      message: "Error occured",
+      message: "An error occurred while editing the product.",
     });
   }
 };
 
-//delete a product
+// Deletes a product by ID with error handling for invalid entries
 const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const product = await Product.findByIdAndDelete(id);
 
-    if (!product)
+    if (!product) {
       return res.status(404).json({
         success: false,
         message: "Product not found",
       });
+    }
 
     res.status(200).json({
       success: true,
-      message: "Product delete successfully",
+      message: "Product deleted successfully",
     });
   } catch (e) {
-    console.log(e);
+    console.error(e);
     res.status(500).json({
       success: false,
-      message: "Error occured",
+      message: "Error occurred while deleting the product.",
     });
   }
 };
 
+// Exporting all product-related controllers
 module.exports = {
   handleImageUpload,
   addProduct,
