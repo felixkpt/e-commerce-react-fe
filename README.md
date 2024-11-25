@@ -15,12 +15,6 @@ Welcome to **ShopHive**, a modern e-commerce platform designed to deliver a seam
 
 ---
 
-## Live Demo
-
-Check out the live version of **ShopHive**: [ShopHive Live](https://your-live-demo-link.com)
-
----
-
 ## Installation Guide
 
 ### Prerequisites
@@ -42,31 +36,31 @@ Ensure you have the following installed:
 bash
 Copy code
 npm install
-# or
+## or
 yarn install
 Start the development server:
 
 bash
 Copy code
 npm start
-# or
+## or
 yarn start
 Open your browser and navigate to http://localhost:3000.
 
-# Technologies Used
+## Technologies Used
 Frontend: React, Redux Toolkit, TailwindCSS
 State Management: Redux Toolkit
 Routing: React Router
 Icons: Lucide React
 UI Components: TailwindCSS-based custom components
 
-# Key Components
+## Key Components
 ProductFilter: A sidebar for filtering products by category and other parameters.
 ShoppingProductTile: Displays product information in an elegant tile layout.
 ProductDetailsDialog: Modal for viewing detailed product information.
 Cart Management: Handles item addition, quantity validation, and cart updates.
 
-# Features Breakdown
+## Features Breakdown
 Browse Products: View products in a responsive grid layout.
 Apply Filters: Narrow down product choices using categories or other filters.
 Sort Items: Arrange products by price, relevance, or custom criteria.
@@ -74,13 +68,13 @@ Detailed Product View: Click on a product to access detailed information.
 Add to Cart: Seamlessly add products to your cart with instant stock validation.
 Loading States: Informative messages when fetching data or if no content is available.
 
-# Future Roadmap
+## Future Roadmap
 Wishlist Functionality: Save products for later.
 Payment Gateway: Integrate secure payment options.
 Order Tracking: Enable users to view and track their orders.
 Product Recommendations: AI-powered personalized suggestions.
 
-# Contributing
+## Contributing
 We welcome contributions to make ShopHive even better!
 
 Fork the repository.
@@ -98,7 +92,7 @@ Copy code
 git push origin feature-name
 Open a pull request on GitHub.
 
-# License
+## License
 This project is licensed under the MIT License.
 
 Author
