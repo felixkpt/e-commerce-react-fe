@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 function ShoppingProductTile({
   product,
-  handleGetProductDetails,
+  handleProductQuickView,
   handleAddtoCart,
 }) {
   return (
@@ -15,7 +15,7 @@ function ShoppingProductTile({
         <div className="relative">
           <span className="product-quick-view absolute right-0 top-[50%] rounded p-0.5 text-gray-200" onClick={(e) => {
             e.preventDefault()
-            handleGetProductDetails(product?._id)
+            handleProductQuickView(product?._id)
           }}>
             Quick view
           </span>
@@ -39,7 +39,7 @@ function ShoppingProductTile({
           ) : null}
         </div>
         <CardContent className="p-4">
-          <h2 className="text-xl font-bold mb-2">{product?.title}</h2>
+          <h2 className="mb-2">{product?.title}</h2>
           <div className="flex justify-between items-center mb-2">
             <span className="text-[16px] text-muted-foreground">
               {categoryOptionsMap[product?.category]}

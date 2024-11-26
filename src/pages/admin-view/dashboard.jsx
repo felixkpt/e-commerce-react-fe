@@ -12,12 +12,17 @@ function AdminDashboard() {
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoadingState, setImageLoadingState] = useState(false);
+  const [validationError, setValidationError] = useState(""); // Validation error state
   const dispatch = useDispatch();
   const { featureImageList } = useSelector((state) => state.commonFeature);
 
-  console.log(uploadedImageUrl, "uploadedImageUrl");
-
   function handleUploadFeatureImage() {
+    if (!uploadedImageUrl) {
+      setValidationError("Please upload an image before submitting.");
+      return;
+    }
+
+    setValidationError(""); // Clear any existing errors
     dispatch(addFeatureImage(uploadedImageUrl)).then((data) => {
       if (data?.payload?.success) {
         dispatch(getFeatureImages());
@@ -39,8 +44,6 @@ function AdminDashboard() {
     dispatch(getFeatureImages());
   }, [dispatch]);
 
-  console.log(featureImageList, "featureImageList");
-
   return (
     <div>
       <ProductImageUpload
@@ -52,30 +55,33 @@ function AdminDashboard() {
         imageLoadingState={imageLoadingState}
         isCustomStyling={true}
       />
+      {validationError && (
+        <p className="text-red-500 text-sm mt-2">{validationError}</p>
+      )}
       <Button onClick={handleUploadFeatureImage} className="mt-5 w-full">
         Upload
       </Button>
       <div className="flex flex-col gap-4 mt-5">
         {featureImageList && featureImageList.length > 0
           ? featureImageList.map((featureImgItem) => (
-            <div
-              key={featureImgItem._id}
-              className="relative flex flex-col items-center shadow-lg rounded p-1 bg-white"
-            >
-              <Button
-                onClick={() => handleRemoveFeatureImage(featureImgItem._id)}
-                className="mt-2 absolute right-1 top-1"
-                variant="destructive"
+              <div
+                key={featureImgItem._id}
+                className="relative flex flex-col items-center shadow-lg rounded p-1 bg-white"
               >
-                Remove
-              </Button>
+                <Button
+                  onClick={() => handleRemoveFeatureImage(featureImgItem._id)}
+                  className="mt-2 absolute right-1 top-1"
+                  variant="destructive"
+                >
+                  Remove
+                </Button>
 
-              <img
-                src={featureImgItem.image}
-                className="w-full h-[300px] object-cover rounded-t-lg"
-              />
-            </div>
-          ))
+                <img
+                  src={featureImgItem.image}
+                  className="w-full h-[300px] object-cover rounded-t-lg"
+                />
+              </div>
+            ))
           : null}
       </div>
     </div>

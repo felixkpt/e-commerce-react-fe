@@ -80,8 +80,14 @@ function SearchProducts() {
   }
 
   useEffect(() => {
-    if (productDetails !== null) setOpenDetailsDialog(true);
+    if (openDetailsDialog &&  productDetails !== null) setOpenDetailsDialog(true);
   }, [productDetails]);
+
+
+  const handleProductQuickView = (productId) => {
+    setOpenDetailsDialog(true)
+    handleGetProductDetails(productId)
+  }
 
   return (
     <div className="container mx-auto md:px-6 px-4 py-8">
@@ -112,9 +118,9 @@ function SearchProducts() {
           {searchResults.map((item, index) => (
             <ShoppingProductTile
               key={index}
+              handleProductQuickView={handleProductQuickView}
               handleAddtoCart={handleAddtoCart}
               product={item}
-              handleGetProductDetails={handleGetProductDetails}
             />
           ))}
         </div>

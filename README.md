@@ -104,7 +104,6 @@ This project is licensed under the MIT License.
 Author
 Felix Kiptoo Biwott
 GitHub: felixkpt
-Email: felixbiwott@gmail.com
 
 Thank you for exploring ShopHive! We hope you enjoy using our platform.
 Feel free to contribute or get in touch for collaboration opportunities! 🚀

@@ -110,10 +110,10 @@ const ProductDetails = ({ product }) => {
             </div>
             <div className="">
                 <div className="cursor-default">
-                    <h1 className="text-3xl font-extrabold">{product?.title}</h1>
+                    <h1 className="text-2xl font-extrabold">{product?.title}</h1>
                     {/* Description with max height and overflow */}
                     <p
-                        className={`text-muted-foreground text-lg mb-5 mt-4 ${!showFullDescription ? 'max-h-[300px] overflow-hidden' : ''}`}
+                        className={`text-gray-600 text-lg mb-5 mt-4 ${!showFullDescription ? 'max-h-[300px] overflow-hidden' : ''}`}
                     >
                         {product?.description}
                     </p>

@@ -148,8 +148,14 @@ function ShoppingListing() {
   }, [dispatch, sort, filters]);
 
   useEffect(() => {
-    if (productDetails !== null) setOpenDetailsDialog(true);
+    if (openDetailsDialog && productDetails !== null) setOpenDetailsDialog(true);
   }, [productDetails]);
+
+
+  const handleProductQuickView = (productId) => {
+    setOpenDetailsDialog(true)
+    handleGetProductDetails(productId)
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
@@ -199,7 +205,7 @@ function ShoppingListing() {
             {productList.map((productItem, i) => (
               <ShoppingProductTile
                 key={i}
-                handleGetProductDetails={handleGetProductDetails}
+                handleProductQuickView={handleProductQuickView}
                 product={productItem}
                 handleAddtoCart={handleAddtoCart}
               />
