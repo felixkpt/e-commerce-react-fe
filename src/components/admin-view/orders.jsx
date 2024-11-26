@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Dialog } from "../ui/dialog";
 import {
   Table,
   TableBody,
@@ -31,8 +30,6 @@ function AdminOrdersView() {
   useEffect(() => {
     dispatch(getAllOrdersForAdmin());
   }, [dispatch]);
-
-  console.log(orderDetails, "orderList");
 
   useEffect(() => {
     if (orderDetails !== null) setOpenDetailsDialog(true);
@@ -87,22 +84,21 @@ function AdminOrdersView() {
                     </TableCell>
                     <TableCell>${orderItem?.totalAmount}</TableCell>
                     <TableCell>
-                      <Dialog
-                        open={openDetailsDialog}
-                        onOpenChange={() => {
-                          setOpenDetailsDialog(false);
-                          dispatch(resetOrderDetails());
-                        }}
+
+                      <Button
+                        onClick={() =>
+                          handleFetchOrderDetails(orderItem?._id)
+                        }
                       >
-                        <Button
-                          onClick={() =>
-                            handleFetchOrderDetails(orderItem?._id)
-                          }
-                        >
-                          View Details
-                        </Button>
-                        <AdminOrderDetailsView orderDetails={orderDetails} />
-                      </Dialog>
+                        View Details
+                      </Button>
+                        <AdminOrderDetailsView orderDetails={orderDetails} 
+                                                openDetailsDialog={openDetailsDialog}
+                                                onOpenChange={() => {
+                                                  setOpenDetailsDialog(false);
+                                                  dispatch(resetOrderDetails());
+                                                }}
+                        />
                     </TableCell>
                   </TableRow>
                 )

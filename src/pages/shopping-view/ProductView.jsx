@@ -1,14 +1,13 @@
 import ProductDetails from "@/components/shopping-view/ProductDetails";
 import { fetchAllCategories } from "@/store/shop/category-slice";
 import { fetchProductDetails } from "@/store/shop/products-slice";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 const ProductView = () => {
   const { id: productId } = useParams(); // Extract `id` from the route params
   const { categoryList = [] } = useSelector((state) => state.shopCategories);
-  const [canRenderNoProdFound, setCanRenderNoProdFound] = useState(false)
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -29,16 +28,6 @@ const ProductView = () => {
   }, [dispatch]);
 
 
-  // Fetch categories on component mount
-  useEffect(() => {
-    setCanRenderNoProdFound(false)
-    const timer = setTimeout(() => {
-      setCanRenderNoProdFound(true)
-    }, 600);
-
-    return () => clearTimeout(timer)
-  }, [productDetails]);
-
   function handleNavigateToListingPage(getCurrentItem, section) {
 
     dispatch(fetchProductDetails(null));
@@ -52,13 +41,12 @@ const ProductView = () => {
 
     setTimeout(() => {
       navigate(`/shop/listing`);
-      setCanRenderNoProdFound(true)
     }, 400);
   }
 
   if (isLoading) return <div>Loading...</div>;
 
-  if (!productDetails && canRenderNoProdFound) {
+  if (!productDetails) {
     return (
       <div className="flex flex-col items-center justify-center h-screen text-center">
         <h2 className="text-2xl font-semibold text-gray-700 mb-4">
@@ -85,15 +73,17 @@ const ProductView = () => {
         <ProductDetails product={productDetails} />
       </div>
       <div className="w-full md:w-1/5">
-        <section className="py-12 bg-gray-50">
+        <section className="py-12 bg-gray-50 min-h-[85%] rounded">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold md:text-center mb-8">
-              Shop by category
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <h2 className="text-3xl font-bold mb-8">Shop by category</h2>
+            <div className="flex flex-col gap-4">
               {categoryList?.map((option, i) => (
-                <div key={i} onClick={() => handleNavigateToListingPage(option, 'category')}>
-                  <span className="flex font-medium items-center cursor-pointer">
+                <div
+                  key={i}
+                  className="cursor-pointer"
+                  onClick={() => handleNavigateToListingPage(option, 'category')}
+                >
+                  <span className="flex font-medium items-center">
                     {option.name}
                   </span>
                 </div>
