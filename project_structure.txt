@@ -1,0 +1,162 @@
+.
+├── components.json
+├── .env
+├── eslint.config.js
+├── .gitignore
+├── index.html
+├── jsconfig.json
+├── package.json
+├── package-lock.json
+├── postcss.config.js
+├── project_structure.txt
+├── public
+│   ├── index.html
+│   └── vite.svg
+├── README.md
+├── src
+│   ├── App.css
+│   ├── App.jsx
+│   ├── assets
+│   │   ├── account.jpg
+│   │   ├── banner-1.webp
+│   │   ├── banner-2.webp
+│   │   ├── banner-3.webp
+│   │   ├── blog-checkout_1200x677.webp
+│   │   ├── checkout.jpg
+│   │   ├── chek.webp
+│   │   ├── images.jpeg
+│   │   ├── react.svg
+│   │   └── self-checkout_wide-0563f4383d45912afa6baf80680d80c51640c9e8.jpg
+│   ├── components
+│   │   ├── admin-view
+│   │   │   ├── AdminProductCard.jsx
+│   │   │   ├── header.jsx
+│   │   │   ├── image-upload.jsx
+│   │   │   ├── layout.jsx
+│   │   │   ├── order-details.jsx
+│   │   │   ├── orders.jsx
+│   │   │   └── sidebar.jsx
+│   │   ├── Announcement.jsx
+│   │   ├── auth
+│   │   │   └── layout.jsx
+│   │   ├── Categories.jsx
+│   │   ├── CategoryItem.jsx
+│   │   ├── common
+│   │   │   ├── check-auth.jsx
+│   │   │   ├── form.jsx
+│   │   │   └── star-rating.jsx
+│   │   ├── Footer.jsx
+│   │   ├── HomeSlider.jsx
+│   │   ├── Navbar.jsx
+│   │   ├── Newsletter.jsx
+│   │   ├── Product.jsx
+│   │   ├── Products.jsx
+│   │   ├── shopping-view
+│   │   │   ├── address-card.jsx
+│   │   │   ├── address.jsx
+│   │   │   ├── cart-items-content.jsx
+│   │   │   ├── cart.jsx
+│   │   │   ├── cart-wrapper.jsx
+│   │   │   ├── CategoriesFilters.jsx
+│   │   │   ├── filter.jsx
+│   │   │   ├── header.jsx
+│   │   │   ├── layout.jsx
+│   │   │   ├── order-details.jsx
+│   │   │   ├── orders.jsx
+│   │   │   ├── paypal-cancel.jsx
+│   │   │   ├── ProductDetailsDialog.jsx
+│   │   │   ├── ProductDetails.jsx
+│   │   │   ├── ProductReviews.jsx
+│   │   │   └── product-tile.jsx
+│   │   ├── Slider.jsx
+│   │   └── ui
+│   │       ├── avatar.jsx
+│   │       ├── badge.jsx
+│   │       ├── button.jsx
+│   │       ├── card.jsx
+│   │       ├── checkbox.jsx
+│   │       ├── dialog.jsx
+│   │       ├── dropdown-menu.jsx
+│   │       ├── input.jsx
+│   │       ├── label.jsx
+│   │       ├── select.jsx
+│   │       ├── separator.jsx
+│   │       ├── sheet.jsx
+│   │       ├── skeleton.jsx
+│   │       ├── table.jsx
+│   │       ├── tabs.jsx
+│   │       ├── textarea.jsx
+│   │       ├── toaster.jsx
+│   │       ├── toast.jsx
+│   │       └── use-toast.js
+│   ├── config
+│   │   ├── categories.js
+│   │   └── index.js
+│   ├── data.js
+│   ├── index.css
+│   ├── index.js
+│   ├── lib
+│   │   └── utils.js
+│   ├── main.jsx
+│   ├── pages
+│   │   ├── admin-view
+│   │   │   ├── AdminCreateProductsFromJson.tsx
+│   │   │   ├── dashboard.jsx
+│   │   │   ├── features.jsx
+│   │   │   ├── orders.jsx
+│   │   │   └── products.jsx
+│   │   ├── auth
+│   │   │   ├── login.jsx
+│   │   │   └── register.jsx
+│   │   ├── Cart.jsx
+│   │   ├── Home.jsx
+│   │   ├── Login.jsx
+│   │   ├── not-found
+│   │   │   └── index.jsx
+│   │   ├── Product.jsx
+│   │   ├── ProductList.jsx
+│   │   ├── Register.jsx
+│   │   ├── shopping-view
+│   │   │   ├── account.jsx
+│   │   │   ├── checkout.jsx
+│   │   │   ├── home.jsx
+│   │   │   ├── listing.jsx
+│   │   │   ├── payment-success.jsx
+│   │   │   ├── paypal-return.jsx
+│   │   │   ├── ProductView.jsx
+│   │   │   └── search.jsx
+│   │   └── unauth-page
+│   │       └── index.jsx
+│   ├── responsive.js
+│   ├── store
+│   │   ├── admin
+│   │   │   ├── order-slice
+│   │   │   │   └── index.js
+│   │   │   └── products-slice
+│   │   │       └── index.js
+│   │   ├── auth-slice
+│   │   │   └── index.js
+│   │   ├── common-slice
+│   │   │   └── index.js
+│   │   ├── shop
+│   │   │   ├── address-slice
+│   │   │   │   └── index.js
+│   │   │   ├── cart-slice
+│   │   │   │   └── index.js
+│   │   │   ├── category-slice
+│   │   │   │   └── index.js
+│   │   │   ├── order-slice
+│   │   │   │   └── index.js
+│   │   │   ├── products-slice
+│   │   │   │   └── index.js
+│   │   │   ├── review-slice
+│   │   │   │   └── index.js
+│   │   │   └── search-slice
+│   │   │       └── index.js
+│   │   └── store.js
+│   └── utilities
+│       └── helpers.js
+├── tailwind.config.js
+└── vite.config.js
+
+32 directories, 127 files
