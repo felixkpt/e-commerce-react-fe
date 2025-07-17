@@ -3,8 +3,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { loginFormControls } from "@/config";
 import { loginUser } from "@/store/auth-slice";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, Navigate } from "react-router-dom";
 
 const initialState = {
   email: "",
@@ -15,6 +15,9 @@ function AuthLogin() {
   const [formData, setFormData] = useState(initialState);
   const dispatch = useDispatch();
   const { toast } = useToast();
+  const { user, isAuthenticated } = useSelector(
+    (state) => state.auth
+  );
 
   function onSubmit(event) {
     event.preventDefault();
@@ -33,21 +36,24 @@ function AuthLogin() {
     });
   }
 
+  if (
+    isAuthenticated &&
+    (location.pathname.includes("/login") ||
+      location.pathname.includes("/register"))
+  ) {
+    if (user?.role === "admin") {
+      return <Navigate to="/admin/dashboard" />;
+    } else {
+      return <Navigate to="/shop" />;
+    }
+  }
+
   return (
     <div className="mx-auto w-full max-w-md space-y-6">
       <div className="text-center">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Sign in to your account
         </h1>
-        <p className="mt-2">
-          Don't have an account
-          <Link
-            className="font-medium ml-2 text-primary hover:underline"
-            to="/auth/register"
-          >
-            Register
-          </Link>
-        </p>
       </div>
       <CommonForm
         formControls={loginFormControls}
@@ -56,6 +62,25 @@ function AuthLogin() {
         setFormData={setFormData}
         onSubmit={onSubmit}
       />
+      <div className="flex flex-col md:flex-row justify-between md:items-center space-y-2">
+        <div className="text-end md:text-start">
+          <Link
+            className="font-medium ml-2 text-primary hover:underline"
+            to="/auth/forgot-password"
+          >Forgot Password?
+          </Link>
+        </div>
+        <p className="text-end">
+          Don&apos;t have an account?
+          <Link
+            className="font-medium ml-2 text-primary hover:underline"
+            to="/auth/register"
+          >
+            Sign Up
+          </Link>
+        </p>
+      </div>
+
     </div>
   );
 }

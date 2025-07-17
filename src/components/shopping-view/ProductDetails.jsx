@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { addReview } from "@/store/shop/review-slice";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
+import { Textarea } from "../ui/textarea";
 
 const ProductDetails = ({ product }) => {
 
@@ -188,7 +189,7 @@ const ProductDetails = ({ product }) => {
 
                         }
                     </div>
-                    <div className="mt-10 flex-col flex gap-2">
+                    <div className="mt-10 mx-1 flex-col flex gap-2">
                         <Label>Write a review</Label>
                         <div className="flex gap-1">
                             <StarRatingComponent
@@ -197,7 +198,7 @@ const ProductDetails = ({ product }) => {
                                 handleRatingChange={handleRatingChange}
                             />
                         </div>
-                        <Input
+                        <Textarea
                             name="reviewMsg"
                             value={reviewMsg}
                             onChange={(event) => setReviewMsg(event.target.value)}
@@ -206,6 +207,7 @@ const ProductDetails = ({ product }) => {
                         <Button
                             onClick={handleAddReview}
                             disabled={reviewMsg.trim() === ""}
+                            className="bg-green-600 hover:bg-green-700"
                         >
                             Submit
                         </Button>

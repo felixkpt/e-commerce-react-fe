@@ -35,7 +35,6 @@ function AuthRegister() {
     });
   }
 
-  console.log(formData);
 
   return (
     <div className="mx-auto w-full max-w-md space-y-6">
@@ -60,6 +59,16 @@ function AuthRegister() {
         setFormData={setFormData}
         onSubmit={onSubmit}
       />
+      <p className="space-y-2 text-end">
+        Already have an account?
+        <Link
+          className="font-medium ml-2 text-primary hover:underline"
+          to="/auth/login"
+        >
+          Sign In
+        </Link>
+      </p>
+
     </div>
   );
 }

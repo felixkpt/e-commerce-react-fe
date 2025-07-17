@@ -1,47 +1,45 @@
 import { Navigate, useLocation } from "react-router-dom";
+import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
-function CheckAuth({ isAuthenticated, user, children, isIndex = false }) {
+function CheckAuth({ children }) {
   const location = useLocation();
+  const { user, isAuthenticated, isLoading } = useSelector((state) => state.auth);
+  const [navigateToLogin, setNavigateToLogin] = useState(false)
 
-  if (location.pathname === "/") {
-    if (!isAuthenticated) {
-      return <Navigate to="/auth/login" />;
-    } else if (isIndex) {
-      return <Navigate to="/shop" />;
+  useEffect(() => {
+    if (!isLoading) {
+      if (
+        !isAuthenticated &&
+        !(
+          location.pathname.includes("/login") ||
+          location.pathname.includes("/register")
+        )
+      ) {
+        setNavigateToLogin(true)
+      }
+
+      if (isAuthenticated && (user?.role !== "admin" && location.pathname.includes("admin"))) {
+        console.log("setter 2")
+        setNavigateToLogin(true)
+      }
     }
-  }
 
-  if (
-    !isAuthenticated &&
-    !(
-      location.pathname.includes("/login") ||
-      location.pathname.includes("/register")
-    )
-  ) {
+  }, [user, isAuthenticated, isLoading, setNavigateToLogin])
+
+  if (navigateToLogin) {
     return <Navigate to="/auth/login" />;
-  }
-
-  if (
-    isAuthenticated &&
-    (location.pathname.includes("/login") ||
-      location.pathname.includes("/register"))
-  ) {
-    if (user?.role === "admin") {
-      return <Navigate to="/admin/dashboard" />;
-    } else {
-      return <Navigate to="/shop" />;
-    }
-  }
-
-  if (
-    isAuthenticated &&
-    user?.role !== "admin" &&
-    location.pathname.includes("admin")
-  ) {
-    return <Navigate to="/unauth-page" />;
   }
 
   return <>{children}</>;
 }
+
+CheckAuth.propTypes = {
+  isAuthenticated: PropTypes.bool.isRequired,
+  user: PropTypes.object,
+  children: PropTypes.node,
+  isIndex: PropTypes.bool
+};
 
 export default CheckAuth;

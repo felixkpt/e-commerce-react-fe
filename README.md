@@ -35,8 +35,8 @@ The **ShopHive Frontend** is a modern eCommerce web application built with React
 ### Steps  
 1. Clone the repository:  
    ```bash  
-   git clone https://github.com/felixkpt/e-commerce-react-fe.git  
-   cd e-commerce-react-fe  
+   git clone https://github.com/felixkpt/shophive-react-fe.git  
+   cd shophive-react-fe  
    ```  
 
 2. Install dependencies:  
